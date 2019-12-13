@@ -47,6 +47,29 @@ namespace EventMonitor
                         {
                             file.WriteLine(account + "/" + time + "/" + ipAddress + "/" + hostName + "/");
                         }
+
+                        string eventMsg = "";
+                        if (eventID == 7001)
+                        {
+                            eventMsg = account + " logged in";
+                        }
+                        else
+                        {
+                            eventMsg = account + "logged out";
+
+                        }
+                        string Source = "EventMonitor";
+                        string Log = "Application";
+
+                        if (!EventLog.SourceExists(Source))
+                            EventLog.CreateEventSource(Source, Log);
+
+                        using (EventLog eventLog = new EventLog("Application"))
+                        {
+                            eventLog.Source = "EventMonitor";
+                            eventLog.WriteEntry(eventMsg, EventLogEntryType.Information);
+                        }
+
                         //Console.WriteLine(time);
                         //Console.WriteLine(account);
                         //Console.WriteLine(hostName);

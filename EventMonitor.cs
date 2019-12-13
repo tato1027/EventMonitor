@@ -50,6 +50,7 @@ namespace EventMonitor
             EventLog log = new EventLog(eventProvider);
             log.EntryWritten += new EntryWrittenEventHandler(Event.OnEntryWritten);
             log.EnableRaisingEvents = true;
+
         }
 
         protected override void OnStop()
