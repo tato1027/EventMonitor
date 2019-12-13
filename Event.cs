@@ -17,6 +17,7 @@ namespace EventMonitor
         {
             try
             {
+                //testing...
                 string eventProvider = "System";
                 string logName = eventProvider;
                 int lastEntry = 0;
