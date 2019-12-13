@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace EventMonitor
@@ -48,20 +43,9 @@ namespace EventMonitor
                         {
                             eventMsg = account + " logged out from " + hostName;
                         }
-                        string Source = "EventMonitor";
-                        string Log = "EventMonitorService";
 
-                        if (!EventLog.SourceExists(Source))
-                            EventLog.CreateEventSource(Source, Log);
-
-                        using (EventLog eventLog = new EventLog("EventMonitorService"))
-                        {
-                            eventLog.Source = "EventMonitor";
-                            eventLog.WriteEntry(eventMsg, EventLogEntryType.Information);
-                        }
-
-                        Console.WriteLine(account);
-                        Console.WriteLine(hostName);
+                        //Console.WriteLine(account);
+                        //Console.WriteLine(hostName);
                     }
                     catch (EventLogNotFoundException ex)
                     {
