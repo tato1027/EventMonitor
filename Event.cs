@@ -32,20 +32,25 @@ namespace EventMonitor
                         XNamespace ns = "http://schemas.microsoft.com/win/2004/08/events/event";
                         string sid = xml.Descendants(ns + "Data").Last().Value;
                         string account = new System.Security.Principal.SecurityIdentifier(sid).Translate(typeof(System.Security.Principal.NTAccount)).ToString();
+                        var shortAc = account.Split((@"\").ToCharArray());
                         string hostName = System.Environment.MachineName;
-
                         string eventMsg = "";
                         if (eventID == 7001)
                         {
-                            eventMsg = account + " logged in on " + hostName;
+                            eventMsg = shortAc[1] + " logon";
                         }
                         else
                         {
-                            eventMsg = account + " logged out from " + hostName;
+                            eventMsg = shortAc[1] + " logoff";
                         }
-
-                        //Console.WriteLine(account);
-                        //Console.WriteLine(hostName);
+                        string sourceLog = "EventMonitor";
+                        EventLog systemEventLog = new EventLog("Application");
+                        if (!EventLog.SourceExists(sourceLog))
+                        {
+                            EventLog.CreateEventSource(sourceLog, "Application");
+                        }
+                        systemEventLog.Source = sourceLog;
+                        systemEventLog.WriteEntry(eventMsg, EventLogEntryType.Information, 1111);
                     }
                     catch (EventLogNotFoundException ex)
                     {

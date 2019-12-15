@@ -1,4 +1,6 @@
-﻿namespace EventMonitor
+﻿using System.ServiceProcess;
+
+namespace EventMonitor
 {
     static class Program
     {
