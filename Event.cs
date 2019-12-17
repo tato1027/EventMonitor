@@ -19,7 +19,7 @@ namespace EventMonitor
                 lastEntry = log.Entries.Count - 1;
                 int eventID = log.Entries[lastEntry].EventID;
                 string eventSource = log.Entries[lastEntry].Source;
-                if (eventID == 7001 | eventID == 7002 | eventSource == "Service Control Manager") //ПОМЕНЯТЬ НА WINLOGON ПЕРЕД РЕЛИЗОМ!!
+                if (eventID == 7001 | eventID == 7002 | eventSource == "Winlogon") 
                 {
                     int eventRecordID = log.Entries[lastEntry].Index;
                     string query = "*[System/EventRecordID=" + eventRecordID + "]";
