@@ -12,14 +12,13 @@ namespace EventMonitor
         {
             try
             {
-                string eventProvider = "System";
-                string logName = eventProvider;
+                string logName = "System";
                 int lastEntry = 0;
                 EventLog log = new EventLog(logName);
                 lastEntry = log.Entries.Count - 1;
                 int eventID = log.Entries[lastEntry].EventID;
                 string eventSource = log.Entries[lastEntry].Source;
-                if (eventID == 7001 | eventID == 7002 | eventSource == "Winlogon") 
+                if ((eventID == 7001 | eventID == 7002) & eventSource == "Service Control Manager") 
                 {
                     int eventRecordID = log.Entries[lastEntry].Index;
                     string query = "*[System/EventRecordID=" + eventRecordID + "]";
@@ -33,40 +32,49 @@ namespace EventMonitor
                         string sid = xml.Descendants(ns + "Data").Last().Value;
                         string account = new System.Security.Principal.SecurityIdentifier(sid).Translate(typeof(System.Security.Principal.NTAccount)).ToString();
                         var shortAc = account.Split((@"\").ToCharArray());
-                        string hostName = System.Environment.MachineName;
                         string eventMsg = "";
                         if (eventID == 7001)
                         {
-                            eventMsg = shortAc[1] + " logon";
+                            eventMsg = (shortAc[1]).ToLower() + " logon";
                         }
                         else
                         {
-                            eventMsg = shortAc[1] + " logoff";
+                            eventMsg = shortAc[1].ToLower() + " logoff";
                         }
-                        string sourceLog = "EventMonitor";
-                        EventLog systemEventLog = new EventLog("Application");
-                        if (!EventLog.SourceExists(sourceLog))
-                        {
-                            EventLog.CreateEventSource(sourceLog, "Application");
-                        }
-                        systemEventLog.Source = sourceLog;
-                        systemEventLog.WriteEntry(eventMsg, EventLogEntryType.Information, 1111);
+                        WrtieToLog(eventMsg, 1111, EventLogEntryType.Information);                        
                     }
                     catch (EventLogNotFoundException ex)
                     {
-                        Console.WriteLine(ex.Message);
-                        return;
+                        WrtieToLog(ex.Message.ToString(), 1112, EventLogEntryType.Error);
+                        throw;
                     }
                 }
-
                 log.Close();
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                WrtieToLog(ex.Message.ToString(), 1113, EventLogEntryType.Error);
                 throw;
             }
 
+        }
+        private static void WrtieToLog(string eventMsg, int eventID, EventLogEntryType severety)
+        {
+            try
+            {
+                string sourceLog = "EventMonitor";
+                EventLog systemEventLog = new EventLog("Application");
+                if (!EventLog.SourceExists(sourceLog))
+                {
+                    EventLog.CreateEventSource(sourceLog, "Application");
+                }
+                systemEventLog.Source = sourceLog;
+                systemEventLog.WriteEntry(eventMsg, severety, eventID);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }
