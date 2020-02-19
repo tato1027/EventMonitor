@@ -18,7 +18,7 @@ namespace EventMonitor
                 lastEntry = log.Entries.Count - 1;
                 int eventID = log.Entries[lastEntry].EventID;
                 string eventSource = log.Entries[lastEntry].Source;
-                if ((eventID == 7001 | eventID == 7002) & eventSource == "Winlogon") 
+                if ((eventID == 7001 | eventID == 7002) & eventSource == "Microsoft-Windows-Winlogon") 
                 {
                     int eventRecordID = log.Entries[lastEntry].Index;
                     string query = "*[System/EventRecordID=" + eventRecordID + "]";
@@ -35,7 +35,7 @@ namespace EventMonitor
                         string eventMsg = "";
                         if (eventID == 7001)
                         {
-                            eventMsg = (shortAc[1]).ToLower() + " logon";
+                            eventMsg = shortAc[1].ToLower() + " logon";
                         }
                         else
                         {
