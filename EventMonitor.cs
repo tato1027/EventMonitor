@@ -19,8 +19,8 @@ namespace EventMonitor
         {
             string eventProvider = "System";
             EventLog log = new EventLog(eventProvider);
+            //log.EnableRaisingEvents = true;
             log.EntryWritten += new EntryWrittenEventHandler(Event.OnEntryWritten);
-            log.EnableRaisingEvents = true;
         }
 
         protected override void OnStop()
