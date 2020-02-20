@@ -10,40 +10,26 @@ namespace EventMonitor
     {
         public static void OnEntryWritten(object source, EntryWrittenEventArgs e)
         {
-            string logName = "System";
-            EventLog log = new EventLog(logName);
-            int lastEntry = log.Entries.Count - 1;
-            int eventID = log.Entries[lastEntry].EventID;
-            int eventRecordID = log.Entries[lastEntry].Index;
-            string eventSource = log.Entries[lastEntry].Source;
-            if (eventSource == "Microsoft-Windows-Winlogon")
+            Console.WriteLine($"received new entry: {e.Entry.Message}");
+            if (e.Entry.Source == "Microsoft-Windows-Winlogon")
             {
-                if (eventID == 7001 || eventID == 7002)
+                if (e.Entry.EventID == 7001 || e.Entry.EventID == 7002)
                 {
-                    string query = "*[System/EventRecordID=" + eventRecordID + "]";
-                    EventLogQuery eventsQuery = new EventLogQuery("System", PathType.LogName, query);
-                    EventLogReader logReader = new EventLogReader(eventsQuery);
-                    EventRecord eventRecord = logReader.ReadEvent();
-                    XDocument xml = XDocument.Parse(eventRecord.ToXml());
-                    XNamespace ns = "http://schemas.microsoft.com/win/2004/08/events/event";
-                    string sid = xml.Descendants(ns + "Data").Last().Value;
-                    string account = new System.Security.Principal.SecurityIdentifier(sid).Translate(typeof(System.Security.Principal.NTAccount)).ToString();
-                    var shortAc = account.Split((@"\").ToCharArray());
                     string eventMsg;
-                    if (eventID == 7001)
+                    if (e.Entry.EventID == 7001)
                     {
-                        eventMsg = shortAc[1].ToLower() + " logon";
+                        eventMsg = GetUsername(e.Entry.Index) + " logon";
                         WrtieToLog(eventMsg, 1111, EventLogEntryType.Information);
+                        Console.WriteLine("НОРМ");
                     }
-                    if (eventID == 7002)
+                    if (e.Entry.EventID == 7002)
                     {
-                        eventMsg = shortAc[1].ToLower() + " logoff";
+                        eventMsg = GetUsername(e.Entry.Index) + " logoff";
                         WrtieToLog(eventMsg, 1112, EventLogEntryType.Information);
+                        Console.WriteLine("НОРМ");
                     }
                 }
-            }
-
-            log.Close();            
+            }                    
         }
         private static void WrtieToLog(string eventMsg, int eventID, EventLogEntryType severety)
         {
@@ -62,6 +48,21 @@ namespace EventMonitor
             {
                 throw;
             }
+        }
+
+        private static string GetUsername(int eventIndex)
+        {
+            string query = "*[System/EventRecordID=" + eventIndex + "]";
+            EventLogQuery eventsQuery = new EventLogQuery("System", PathType.LogName, query);
+            EventLogReader logReader = new EventLogReader(eventsQuery);
+            EventRecord eventRecord = logReader.ReadEvent();
+            XDocument xml = XDocument.Parse(eventRecord.ToXml());
+            XNamespace ns = "http://schemas.microsoft.com/win/2004/08/events/event";
+            string sid = xml.Descendants(ns + "Data").Last().Value;
+            string account = new System.Security.Principal.SecurityIdentifier(sid).Translate(typeof(System.Security.Principal.NTAccount)).ToString();
+            var shortAc = account.Split((@"\").ToCharArray());
+            string userName = shortAc[1].ToLower();
+            return userName;
         }
     }
 }
