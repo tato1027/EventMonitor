@@ -19,7 +19,7 @@ namespace EventMonitor
         {
             string eventProvider = "System";
             EventLog log = new EventLog(eventProvider);
-            //log.EnableRaisingEvents = true;
+            log.EnableRaisingEvents = true;
             log.EntryWritten += new EntryWrittenEventHandler(Event.OnEntryWritten);
         }
 
