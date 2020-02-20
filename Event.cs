@@ -10,7 +10,6 @@ namespace EventMonitor
     {
         public static void OnEntryWritten(object source, EntryWrittenEventArgs e)
         {
-            Console.WriteLine($"received new entry: {e.Entry.Message}");
             if (e.Entry.Source == "Microsoft-Windows-Winlogon")
             {
                 if (e.Entry.EventID == 7001 || e.Entry.EventID == 7002)
@@ -20,13 +19,11 @@ namespace EventMonitor
                     {
                         eventMsg = GetUsername(e.Entry.Index) + " logon";
                         WrtieToLog(eventMsg, 1111, EventLogEntryType.Information);
-                        Console.WriteLine("НОРМ");
                     }
                     if (e.Entry.EventID == 7002)
                     {
                         eventMsg = GetUsername(e.Entry.Index) + " logoff";
                         WrtieToLog(eventMsg, 1112, EventLogEntryType.Information);
-                        Console.WriteLine("НОРМ");
                     }
                 }
             }                    

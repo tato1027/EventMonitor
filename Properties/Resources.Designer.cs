@@ -59,14 +59,5 @@ namespace EventMonitor.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на .
-        /// </summary>
-        internal static string lastEventRecordID {
-            get {
-                return ResourceManager.GetString("lastEventRecordID", resourceCulture);
-            }
-        }
     }
 }
