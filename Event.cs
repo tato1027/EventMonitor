@@ -6,6 +6,7 @@ using System.Xml.Linq;
 
 namespace EventMonitor
 {
+    #test
     class Event
     {
         public static void OnEntryWritten(object source, EntryWrittenEventArgs e)
